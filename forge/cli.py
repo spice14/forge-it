@@ -1,45 +1,39 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-"""
-forge.cli
----------
-Entry point: python -m forge.cli <repo-url>
-"""
-
-import sys
-import tempfile
-from pathlib import Path
-from forge.modules.agent import generate_tests
-from forge.modules.repo import clone_repo
-from forge.modules.test_runner import run_tests
-
-
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python -m forge.cli <git-repo-url>")
-        sys.exit(1)
+    import argparse
+    import logging
+    from pathlib import Path
+    from forge.agents.test_writer import run_agentic_test_generation
 
-    repo_url = sys.argv[1]
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
+    logger = logging.getLogger(__name__)
 
-    print("[+] ForgeTest CLI started.")
-    print(f"[+] Cloning repo: {repo_url}")
+    parser = argparse.ArgumentParser("forge-it agentic test generation")
+    parser.add_argument("repo_root", type=str, help="Path to the repo to analyze")
+    parser.add_argument("--iterations", type=int, default=3, help="Max revision cycles")
+    parser.add_argument("--coverage", type=float, default=90.0, help="Target coverage percentage")
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmpdir_path = Path(tmpdir)
-        repo_path = clone_repo(repo_url, tmpdir_path)
+    args = parser.parse_args()
+    repo_root = Path(args.repo_root).resolve()
 
-        if not repo_path:
-            print("[!] Failed to clone repository.")
-            sys.exit(1)
+    logger.info("🚀 Starting agentic test generation")
+    logger.info("🔍 Repository root: %s", repo_root)
+    logger.info("🔁 Max iterations: %d", args.iterations)
+    logger.info("🎯 Target coverage: %.1f%%", args.coverage)
 
-        print(f"[+] Repo cloned to: {repo_path}")
+    if not repo_root.exists():
+        logger.error("❌ The provided repo path does not exist.")
+        return
+    if not any(repo_root.rglob("*.py")):
+        logger.warning("⚠️ No Python files found in the provided repo path.")
+        return
 
-        tests_dir = repo_path / "tests"
-        generate_tests(repo_path, tests_dir)
-        run_tests(repo_path, tests_dir)
-
-
-if __name__ == "__main__":
-    main()
+    try:
+        run_agentic_test_generation(
+            repo_root=repo_root,
+            max_iters=args.iterations,
+            coverage_target=args.coverage / 100.0
+        )
+    except Exception as e:
+        logger.exception("💥 Unexpected error during test generation: %s", str(e))
+    else:
+        logger.info("✅ Agentic test generation complete.")

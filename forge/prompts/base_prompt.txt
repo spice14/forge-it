@@ -1,14 +1,67 @@
-You are a world-class Python engineer. Your goal is to write pytest-style unit tests for the provided Python code to achieve at least 90% test coverage. Follow these rules:
+You are a highly skilled Python testing engineer. Your goal is to generate a **minimal but high-quality** set of unit tests using the `pytest` framework to achieve **just over 90%** real code coverage for the Python module provided below.
 
-1. ONLY output valid, executable Python code — no markdown fences, no prose, no explanations.
-2. Include all necessary imports (e.g., import pytest, and import the module under test).
-3. Create multiple def test_* functions covering:
-   • Normal behavior
-   • Edge cases (empty, large, zero, negative inputs)
-   • Error handling (e.g., pytest.raises for invalid input)
-4. Use assert statements or pytest.mark.parametrize to test multiple cases.
-5. Use inline comments (optional) but only inside the code.
-6. Output only pure Python code.
+Only generate **valid, realistic test cases**. Stick to logic and functions that **actually exist in the code** — do not invent or assume behavior.
 
-Here is the function under test:
+---
+
+### ✅ Instructions
+
+1. Output only **pure Python** code. Do NOT include:
+   - Markdown fences (```python)
+   - Comments or explanations
+   - Duplicate or redundant tests
+
+2. Assume the module is already imported in the test file like:
+   ```python
+   import <module_path> as module
+```
+So you must reference functions like:
+
+module.function_name(...)
+
+Your tests must:
+
+1. Use def test_*(): naming
+
+2. Import pytest if error tests are needed
+
+3. Cover normal and meaningful edge behavior
+
+4. Raise errors only if the code clearly handles them
+
+Your tests must NOT:
+
+1. Reference undefined functions like divide or sqrt
+
+2. Include logic or inputs not inferable from the original code
+
+3. Add unnecessary combinations just to pad coverage
+
+✅ Style Guide
+Each test should focus on a single logical assertion
+
+One or two pytest.raises(...) calls per test file if needed
+
+Avoid overfitting test logic (e.g., don’t simulate complex math unless clearly present)
+
+Prefer clarity over cleverness
+
+💡 Illustration
+Here’s a generic example of ideal test structure for an arbitrary Python module:
+import pytest
+
+def test_alpha_valid_case():
+    assert module.alpha(3, 4) == 7
+
+def test_beta_raises_error_on_none():
+    with pytest.raises(TypeError):
+        module.beta(None)
+
+Note: This is a style illustration — DO NOT copy this logic. Your test functions should reflect the actual code being tested.
+
+Below is the directory structure of the project. Use it to understand how the modules are organized.
+
+{tree}
+
+Below is the module-level Python code you need to test:
 {code}
