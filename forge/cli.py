@@ -37,3 +37,6 @@ def main():
         logger.exception("💥 Unexpected error during test generation: %s", str(e))
     else:
         logger.info("✅ Agentic test generation complete.")
+
+if __name__ == "__main__":
+    main()
