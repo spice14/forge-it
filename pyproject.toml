@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "forge-it"
+version = "0.1.0"
+description = "CLI tool to generate unit tests with >80% coverage using LLMs (local inference)."
+authors = [{ name = "Your Name" }]
+dependencies = [
+    "requests",
+    "pytest",
+    "coverage"
+]
+
+[project.scripts]
+forge-it = "forge_it.cli:main"
